@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------------
+# Go & Build Artifacts
+# ---------------------------------------------------------------------------
+# Compiled binaries
+*.exe
+*.exe;
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Main app binary output (if built with go build -o app)
+/app
+/main
+
+# ---------------------------------------------------------------------------
+# Beego Framework Specifics
+# ---------------------------------------------------------------------------
+# Beego log files
+/logs/
+*.log
+
+# Bee tool runtime/temporary files
+/lastupdate.tmp
+
+# ---------------------------------------------------------------------------
+# IDE & System Files
+# ---------------------------------------------------------------------------
+# Visual Studio Code
+.vscode/
+
+# JetBrains / GoLand
+.idea/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------------------------------------------
+# Environment & Sensitive Files
+# ---------------------------------------------------------------------------
+# Local environment variables
+.env
+*.local
+
+rental-property-api
+swagger/
