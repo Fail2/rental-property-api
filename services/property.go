@@ -108,6 +108,7 @@ func TransformData(properties []models.SourceProperty) {
 	fmt.Printf("Slice of response properties: %+v\n", InMemoryProperties)
 }
 
-func FilterProperties(minPrice, maxPrice float64, minStarRating int, minReviewScore float64, minReviews int, published bool, feed, minBedroom int) {
+func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReviewScore float64, minReviews int64, published string, feed, minBedroom int64, propertyType string, amenities string, limit int64) []models.ResponseProperty {
 
+	
 }
