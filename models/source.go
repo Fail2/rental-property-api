@@ -1,7 +1,7 @@
 package models
 
 type SourceProperty struct {
-	Id                   string   `json:"id"`
+	ID                   string   `json:"id"`
 	Feed                 uint64      `json:"feed"`
 	Country              string   `json:"country"`
 	CountryCode          string   `json:"country_code"`
@@ -9,7 +9,7 @@ type SourceProperty struct {
 	StateAbbr    string   `json:"state_abbr"`
 	City                 string   `json:"city"`
 	Display              string   `json:"display"`
-	LocationId           string   `json:"location_id"`
+	LocationID           string   `json:"location_id"`
 	PropertyName         string   `json:"property_name"`
 	PropertySlug         string   `json:"property_slug"`
 	PropertyTypeCategory string   `json:"property_type_category"`

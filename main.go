@@ -4,7 +4,6 @@ import (
 	_ "rental-property-api/routers"
 
 	"rental-property-api/services"
-
 	// beego "github.com/beego/beego/v2/server/web"
 )
 
@@ -15,6 +14,6 @@ func main() {
 	// }
 	// beego.Run()
 
-	services.LoadAndTransformData()
+	services.LoadData()
 
 }

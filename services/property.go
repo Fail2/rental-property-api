@@ -12,7 +12,7 @@ import (
 
 var InMemoryProperties []models.ResponseProperty
 
-func LoadAndTransformData() {
+func LoadData() {
 
 	jsonPath, err := config.String("dataPath")
 	if err != nil || jsonPath == "" {
@@ -37,6 +37,11 @@ func LoadAndTransformData() {
 		fmt.Println("Error parsing JSON:", err)
 		return
 	}
+	TransformData(properties)
+
+}
+
+func TransformData(properties []models.SourceProperty) {
 
 	for index, property := range properties {
 
@@ -44,7 +49,7 @@ func LoadAndTransformData() {
 		var breadcrumbs []string
 
 		if property.Categories != "" && property.Categories != "[]" {
-			err = json.Unmarshal([]byte(property.Categories), &Categories)
+			err := json.Unmarshal([]byte(property.Categories), &Categories)
 			if err != nil {
 				fmt.Printf("Index:%d of Can't parse categories: %s \n", index, err)
 				return
@@ -62,7 +67,7 @@ func LoadAndTransformData() {
 			lat = property.LonLat.Coordinates[1]
 		}
 		transformedItem := models.ResponseProperty{
-			ID:        property.Id,
+			ID:        property.ID,
 			Feed:      property.Feed,
 			Published: property.Published,
 			GeoInfo: models.GeoInfo{
@@ -71,7 +76,7 @@ func LoadAndTransformData() {
 				Country:     property.Country,
 				CountryCode: property.CountryCode,
 				Name:        property.Display,
-				LocationID:  property.LocationId,
+				LocationID:  property.LocationID,
 				Lat:         lat,
 				Lon:         lon,
 				State:       property.State,
