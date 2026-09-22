@@ -4,24 +4,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"rental-property-api/models"
-	"runtime"
+
+	"github.com/beego/beego/v2/core/config"
+	"github.com/beego/beego/v2/core/logs"
 )
 
 var InMemoryProperties []models.ResponseProperty
 
 func LoadAndTransformData() {
-	// First find the path of the file
 
-	_, filename, _, _ := runtime.Caller(0)
+	jsonPath, err := config.String("dataPath")
+	if err != nil || jsonPath == "" {
+		jsonPath = "data/rental_properties.json"
+		logs.Warning("dataPath not found in config, using default fallback: %s", jsonPath)
+	}
 
-	// Service direcotory root path
-	serviceDir := filepath.Dir(filename)
-
-	jsonPath := filepath.Join(serviceDir, "..", "data", "rental_properties.json")
-
-	// Read the file
 	data, err := os.ReadFile(jsonPath)
 
 	if err != nil {
