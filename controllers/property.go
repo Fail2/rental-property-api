@@ -11,11 +11,23 @@ type PropertyController struct {
 	beego.Controller
 }
 
+// ListProperties
+// @Title List Properties
+// @Description Get a list of transformed rental properties with optional AND/OR query filters and limit caps.
+// @Param   min_price          query   float   false   "Minimum property price"
+// @Param   max_price          query   float   false   "Maximum property price"
+// @Param   min_star_rating    query   int     false   "Minimum star rating"
+// @Param   property_type      query   string  false   "Exact match category (Hotel, House, Apartment, Villa, Resort, Hostel)"
+// @Param   amenities          query   string  false   "Comma-separated list of required amenities (e.g. Internet,Parking)"
+// @Param   limit              query   int     false   "Maximum number of items to return"
+// @Success 200 {object} map[string]interface{} "Successful transformation payload"
+// @Failure 400 {object} map[string]string "Invalid parameters layout error schema"
+// @router /v1/properties [get]
 func (c *PropertyController) ListProperties() {
 	var err error
 	var minPrice, maxPrice, minReviewScore float64
-	var minStarRating, minReviews, feed, minBedroom,limit int64
-	var published, propertyType, limitStr,amenities string
+	var minStarRating, minReviews, feed, minBedroom, limit int64
+	var published, propertyType, limitStr, amenities string
 
 	if c.GetString("min_price") == "" {
 		minPrice = -1.0
@@ -92,7 +104,7 @@ func (c *PropertyController) ListProperties() {
 	amenities = c.GetString("amenities")
 
 	limitStr = c.GetString("limit")
-	limit = 10
+	limit = -1
 
 	if limitStr != "" {
 		parsedLimit, err := strconv.Atoi(limitStr)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"rental-property-api/models"
+	"strings"
 
 	"github.com/beego/beego/v2/core/config"
 	"github.com/beego/beego/v2/core/logs"
@@ -110,5 +111,76 @@ func TransformData(properties []models.SourceProperty) {
 
 func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReviewScore float64, minReviews int64, published string, feed, minBedroom int64, propertyType string, amenities string, limit int64) []models.ResponseProperty {
 
-	
+	var filtered []models.ResponseProperty
+	var matchFound bool
+
+	for _, p := range InMemoryProperties {
+		if minPrice >= 0.0 && p.Property.Price < minPrice {
+			continue
+		}
+
+		if maxPrice >= 0.0 && p.Property.Price > maxPrice {
+			continue
+		}
+
+		if minStarRating >= 0 && p.Property.StarRating < minStarRating {
+			continue
+		}
+		if minReviewScore >= 0 && p.Property.ReviewScore < minReviewScore {
+			continue
+		}
+		if minReviews >= 0 && p.Property.Counts.Reviews < minReviews {
+			continue
+		}
+
+		if feed >= 0 && p.Feed != feed {
+			continue
+		}
+
+		if minBedroom >= 0 && p.Property.Counts.Bedroom < minBedroom {
+			continue
+		}
+
+		if propertyType != "" && p.Property.PropertyType != propertyType {
+			continue
+		}
+
+		if published != "" {
+			isPublished := published == "true"
+			if isPublished != p.Published {
+				continue
+			}
+		}
+
+		if amenities != "" {
+			searchAmenities := strings.Split(amenities, ",")
+			for _, searchAmenity := range searchAmenities {
+				for _, propertyAmenity := range p.Property.Amenities {
+					if propertyAmenity == searchAmenity {
+						matchFound = true
+						break
+					}
+				}
+				if matchFound == true {
+					break
+				}
+			}
+
+			if !matchFound {
+				continue
+			}
+		}
+
+		filtered = append(filtered, p)
+
+	}
+
+	if filtered == nil {
+		filtered = make([]models.ResponseProperty, 0)
+	}
+
+	if limit > 0 && limit < int64(len(filtered)) {
+		filtered = filtered[:limit]
+	}
+	return filtered
 }
