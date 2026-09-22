@@ -15,6 +15,6 @@ func main() {
 	// }
 	// beego.Run()
 
-	services.PropertyExtract()
+	services.LoadAndTransformData()
 
 }
