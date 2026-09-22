@@ -97,7 +97,7 @@ func TransformData(properties []models.SourceProperty) {
 					Occupancy: property.Occupancy,
 				},
 				Image: models.Image{
-					Count:  uint64(len(property.Images)),
+					Count:  int64(len(property.Images)),
 					Images: property.Images,
 				},
 			},
@@ -106,4 +106,8 @@ func TransformData(properties []models.SourceProperty) {
 	}
 
 	fmt.Printf("Slice of response properties: %+v\n", InMemoryProperties)
+}
+
+func FilterProperties(minPrice, maxPrice float64, minStarRating int, minReviewScore float64, minReviews int, published bool, feed, minBedroom int) {
+
 }

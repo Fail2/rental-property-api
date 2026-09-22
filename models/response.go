@@ -2,7 +2,7 @@ package models
 
 type ResponseProperty struct {
 	ID        string `json:"ID"`
-	Feed      uint64 `json:"Feed"`
+	Feed      int64  `json:"Feed"`
 	Published bool   `json:"Published"`
 	GeoInfo   GeoInfo
 	Property  PropertyDetails
@@ -28,19 +28,19 @@ type PropertyDetails struct {
 	PropertyType string   `json:"PropertyType"`
 	Price        float64  `json:"Price"`
 	ReviewScore  float64  `json:"ReviewScore"`
-	StarRating   uint64   `json:"StarRating"`
+	StarRating   int64    `json:"StarRating"`
 	Counts       Counts   `json:"Counts"`
 	Image        Image    `json:"Image"`
 }
 
 type Counts struct {
-	Bathroom  uint64 `json:"Bathroom"`
-	Bedroom   uint64 `json:"Bedroom"`
-	Reviews   uint64 `json:"Reviews"`
-	Occupancy uint64 `json:"Occupancy"`
+	Bathroom  int64 `json:"Bathroom"`
+	Bedroom   int64 `json:"Bedroom"`
+	Reviews   int64 `json:"Reviews"`
+	Occupancy int64 `json:"Occupancy"`
 }
 
 type Image struct {
-	Count  uint64   `json:"Count"`
+	Count  int64    `json:"Count"`
 	Images []string `json:"Images"`
 }
