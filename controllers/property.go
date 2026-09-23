@@ -92,6 +92,10 @@ func (c *PropertyController) ListProperties() {
 			c.sendBadRequest("Invalid feed parameter")
 			return
 		}
+		if feed != 11 && feed != 12 && feed != 22 && feed != 24 {
+			c.sendBadRequest("Invalid feed parmeter")
+			return
+		}
 	}
 
 	if c.GetString("min_bedroom") == "" {
@@ -108,6 +112,12 @@ func (c *PropertyController) ListProperties() {
 	published = c.GetString("published")
 	amenities = c.GetString("amenities")
 
+	if propertyType != "" && propertyType != "Hotel" && propertyType != "House" &&
+		propertyType != "Apartment" && propertyType != "Villa" && propertyType != "Resort" && propertyType != "Hostel" {
+		c.sendBadRequest("Invalid property type parameter")
+		return
+	}
+
 	limitStr = c.GetString("limit")
 	limit = -1
 
@@ -120,8 +130,11 @@ func (c *PropertyController) ListProperties() {
 		limit = int64(parsedLimit)
 	}
 
-	items := services.FilterProperties(minPrice, maxPrice, minStarRating, minReviewScore, minReviews, published, feed, minBedroom, propertyType, amenities, limit)
+	items, err := services.FilterProperties(minPrice, maxPrice, minStarRating, minReviewScore, minReviews, published, feed, minBedroom, propertyType, amenities, limit)
 
+	if err != nil {
+		c.Ctx.Output.SetStatus(500)
+	}
 	response := map[string]interface{}{
 		"Result": map[string]interface{}{
 			"Count": len(items),
@@ -153,6 +166,10 @@ func (c *PropertyController) GetPropertyByID() {
 	property, err := services.GetPropertyByID(id)
 
 	if err != nil {
+		if err.Error() == "Property not found" {
+			c.Ctx.Output.SetStatus(404)
+		}
+
 		c.Ctx.Output.SetStatus(404)
 		c.Data["json"] = map[string]string{"Error": err.Error()}
 		c.ServeJSON()

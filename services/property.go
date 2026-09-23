@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"rental-property-api/models"
 	"strings"
@@ -11,7 +12,7 @@ import (
 	"github.com/beego/beego/v2/core/logs"
 )
 
-var InMemoryProperties []models.ResponseProperty
+var InMemoryProperties []models.SourceProperty
 
 func LoadData() {
 
@@ -30,19 +31,19 @@ func LoadData() {
 
 	logs.Info("File data len", len(data))
 
-	var properties []models.SourceProperty
-
-	err = json.Unmarshal(data, &properties)
+	err = json.Unmarshal(data, &InMemoryProperties)
 
 	if err != nil {
 		logs.Error("Error parsing JSON:", err)
 		return
 	}
-	TransformData(properties)
+	fmt.Println(InMemoryProperties)
 
 }
 
-func TransformData(properties []models.SourceProperty) {
+func TransformData(properties []models.SourceProperty) ([]models.ResponseProperty, error) {
+
+	var ResponseProperty []models.ResponseProperty = make([]models.ResponseProperty, 0)
 
 	for index, property := range properties {
 
@@ -53,7 +54,7 @@ func TransformData(properties []models.SourceProperty) {
 			err := json.Unmarshal([]byte(property.Categories), &Categories)
 			if err != nil {
 				logs.Error("Index:%d of Can't parse categories: %s \n", index, err)
-				return
+				return nil, err
 			} else {
 				for _, category := range Categories {
 					breadcrumbs = append(breadcrumbs, category.Name)
@@ -103,33 +104,34 @@ func TransformData(properties []models.SourceProperty) {
 				},
 			},
 		}
-		InMemoryProperties = append(InMemoryProperties, transformedItem)
-	}
+		ResponseProperty = append(ResponseProperty, transformedItem)
 
+	}
+	return ResponseProperty, nil
 }
 
-func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReviewScore float64, minReviews int64, published string, feed, minBedroom int64, propertyType string, amenities string, limit int64) []models.ResponseProperty {
+func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReviewScore float64, minReviews int64, published string, feed, minBedroom int64, propertyType string, amenities string, limit int64) ([]models.ResponseProperty, error) {
 
-	var filtered []models.ResponseProperty
+	var filtered []models.SourceProperty
 
 	for _, p := range InMemoryProperties {
 		var matchFound bool
 
-		if minPrice >= 0.0 && p.Property.Price < minPrice {
+		if minPrice >= 0.0 && p.UsdPrice < minPrice {
 			continue
 		}
 
-		if maxPrice >= 0.0 && p.Property.Price > maxPrice {
+		if maxPrice >= 0.0 && p.UsdPrice > maxPrice {
 			continue
 		}
 
-		if minStarRating >= 0 && p.Property.StarRating < minStarRating {
+		if minStarRating >= 0 && p.StarRating < minStarRating {
 			continue
 		}
-		if minReviewScore >= 0 && p.Property.ReviewScore < minReviewScore {
+		if minReviewScore >= 0 && p.ReviewScoreGeneral < minReviewScore {
 			continue
 		}
-		if minReviews >= 0 && p.Property.Counts.Reviews < minReviews {
+		if minReviews >= 0 && p.NumberOfReview < minReviews {
 			continue
 		}
 
@@ -137,11 +139,11 @@ func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReview
 			continue
 		}
 
-		if minBedroom >= 0 && p.Property.Counts.Bedroom < minBedroom {
+		if minBedroom >= 0 && p.BedroomCount < minBedroom {
 			continue
 		}
 
-		if propertyType != "" && p.Property.PropertyType != propertyType {
+		if propertyType != "" && p.PropertyTypeCategory != propertyType {
 			continue
 		}
 
@@ -155,7 +157,7 @@ func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReview
 		if amenities != "" {
 			searchAmenities := strings.Split(amenities, ",")
 			for _, searchAmenity := range searchAmenities {
-				for _, propertyAmenity := range p.Property.Amenities {
+				for _, propertyAmenity := range p.AmenityCategories {
 					if propertyAmenity == searchAmenity {
 						matchFound = true
 						break
@@ -176,19 +178,29 @@ func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReview
 	}
 
 	if filtered == nil {
-		filtered = make([]models.ResponseProperty, 0)
+		filtered = make([]models.SourceProperty, 0)
 	}
 
 	if limit > 0 && limit < int64(len(filtered)) {
 		filtered = filtered[:limit]
 	}
-	return filtered
+
+	ResponseProperty, err := TransformData(filtered)
+
+	return ResponseProperty, err
 }
 
 func GetPropertyByID(id string) (models.ResponseProperty, error) {
 	for _, property := range InMemoryProperties {
 		if property.ID == id {
-			return property, nil
+			Property := make([]models.SourceProperty, 0)
+			Property = append(Property, property)
+			transformedProperty, err := TransformData(Property)
+			if err != nil {
+				return models.ResponseProperty{}, err
+			}
+
+			return transformedProperty[0], nil
 		}
 	}
 

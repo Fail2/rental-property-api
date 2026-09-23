@@ -5,8 +5,10 @@ import (
 	"testing"
 )
 
+var TestProperties = make([]models.ResponseProperty, 0)
+
 func init() {
-	InMemoryProperties = []models.ResponseProperty{
+	TestProperties = []models.ResponseProperty{
 		{
 			ID:        "BC-1001",
 			Feed:      11,
@@ -100,7 +102,7 @@ func TestFilterProperties(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			res := FilterProperties(
+			res, _ := FilterProperties(
 				test.minPrice, test.maxPrice, test.minStar, test.minScore, test.minReviews, test.published, test.feed, test.minBedroom, test.propType, test.amenities, test.limit,
 			)
 
