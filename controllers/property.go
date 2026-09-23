@@ -20,7 +20,7 @@ type PropertyController struct {
 // @Param   min_review_score   query   float   false   "Minimum review score"
 // @Param   min_reviews        query   int     false   "Minimum reviews"
 // @Param   published          query   bool    false   "Published or not"
-// @Param   feed               query   int     false   "Exact match feed"
+// @Param   feed               query   int     false   "Exact match feed (11, 12, 22, 24)"
 // @Param   min_bedroom        query   int     false   "Minimum bedroom"
 // @Param   property_type      query   string  false   "Exact match category (Hotel, House, Apartment, Villa, Resort, Hostel)"
 // @Param   amenities          query   string  false   "Comma-separated list of required amenities (e.g. Internet,Parking)"
@@ -92,7 +92,7 @@ func (c *PropertyController) ListProperties() {
 			c.sendBadRequest("Invalid feed parameter")
 			return
 		}
-		if feed != 11 && feed != 12 && feed != 22 && feed != 24 {
+		if feed != 11 && feed != 12 && feed != 22 && feed != 24 && feed != -1 {
 			c.sendBadRequest("Invalid feed parmeter")
 			return
 		}
