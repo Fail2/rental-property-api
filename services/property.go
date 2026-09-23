@@ -3,7 +3,6 @@ package services
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"rental-property-api/models"
 	"strings"
@@ -25,18 +24,18 @@ func LoadData() {
 	data, err := os.ReadFile(jsonPath)
 
 	if err != nil {
-		fmt.Println("Something error to read file", err)
+		logs.Error("Something error to read file", err)
 		return
 	}
 
-	fmt.Println("File data len", len(data))
+	logs.Info("File data len", len(data))
 
 	var properties []models.SourceProperty
 
 	err = json.Unmarshal(data, &properties)
 
 	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
+		logs.Error("Error parsing JSON:", err)
 		return
 	}
 	TransformData(properties)
@@ -53,7 +52,7 @@ func TransformData(properties []models.SourceProperty) {
 		if property.Categories != "" && property.Categories != "[]" {
 			err := json.Unmarshal([]byte(property.Categories), &Categories)
 			if err != nil {
-				fmt.Printf("Index:%d of Can't parse categories: %s \n", index, err)
+				logs.Error("Index:%d of Can't parse categories: %s \n", index, err)
 				return
 			} else {
 				for _, category := range Categories {
@@ -107,7 +106,6 @@ func TransformData(properties []models.SourceProperty) {
 		InMemoryProperties = append(InMemoryProperties, transformedItem)
 	}
 
-	//fmt.Printf("Slice of response properties: %+v\n", InMemoryProperties)
 }
 
 func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReviewScore float64, minReviews int64, published string, feed, minBedroom int64, propertyType string, amenities string, limit int64) []models.ResponseProperty {
