@@ -107,15 +107,16 @@ func TransformData(properties []models.SourceProperty) {
 		InMemoryProperties = append(InMemoryProperties, transformedItem)
 	}
 
-	fmt.Printf("Slice of response properties: %+v\n", InMemoryProperties)
+	//fmt.Printf("Slice of response properties: %+v\n", InMemoryProperties)
 }
 
 func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReviewScore float64, minReviews int64, published string, feed, minBedroom int64, propertyType string, amenities string, limit int64) []models.ResponseProperty {
 
 	var filtered []models.ResponseProperty
-	var matchFound bool
 
 	for _, p := range InMemoryProperties {
+		var matchFound bool
+
 		if minPrice >= 0.0 && p.Property.Price < minPrice {
 			continue
 		}
