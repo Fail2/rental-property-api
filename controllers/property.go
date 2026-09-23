@@ -133,3 +133,21 @@ func (c *PropertyController) sendBadRequest(message string) {
 	c.Data["json"] = map[string]string{"Error": message}
 	c.ServeJSON()
 }
+
+// GetPropertyByID handles: GET/v1/properties/:id
+func (c *PropertyController) GetPropertyByID() {
+	id := c.Ctx.Input.Param(":id")
+
+	property, err := services.GetPropertyByID(id)
+
+	if err != nil {
+		c.Ctx.Output.SetStatus(404)
+		c.Data["json"] = map[string]string{"Error": err.Error()}
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = property
+	c.ServeJSON()
+
+}

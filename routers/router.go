@@ -12,6 +12,7 @@ func init() {
 	ns := beego.NewNamespace("/v1",
 		beego.NSRouter("/properties",
 			&controllers.PropertyController{}, "get:ListProperties"),
+		beego.NSRouter("/properties/:id", &controllers.PropertyController{}, "get:GetPropertyByID"),
 	)
 	beego.AddNamespace(ns)
 	beego.SetStaticPath("/swagger", "swagger")

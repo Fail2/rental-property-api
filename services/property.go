@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"rental-property-api/models"
@@ -183,4 +184,14 @@ func FilterProperties(minPrice, maxPrice float64, minStarRating int64, minReview
 		filtered = filtered[:limit]
 	}
 	return filtered
+}
+
+func GetPropertyByID(id string) (models.ResponseProperty, error) {
+	for _, property := range InMemoryProperties {
+		if property.ID == id {
+			return property, nil
+		}
+	}
+
+	return models.ResponseProperty{}, errors.New("Property not found")
 }
