@@ -17,12 +17,17 @@ type PropertyController struct {
 // @Param   min_price          query   float   false   "Minimum property price"
 // @Param   max_price          query   float   false   "Maximum property price"
 // @Param   min_star_rating    query   int     false   "Minimum star rating"
+// @Param   min_review_score    query   float   false   "Minimum review score"
+// @Param   min_reviews        query    int     false   "Minimum reviews"
+// @Param   published          query   bool    false    "Published or not"
+// @Param   feed               query   int      false   "Exact match feed"
+// @Param   min_bedroom        query   int      false   "Minimum bedroom"
 // @Param   property_type      query   string  false   "Exact match category (Hotel, House, Apartment, Villa, Resort, Hostel)"
 // @Param   amenities          query   string  false   "Comma-separated list of required amenities (e.g. Internet,Parking)"
 // @Param   limit              query   int     false   "Maximum number of items to return"
 // @Success 200 {object} map[string]interface{} "Successful transformation payload"
 // @Failure 400 {object} map[string]string "Invalid parameters layout error schema"
-// @router /v1/properties [get]
+// @router /properties/ [get]
 func (c *PropertyController) ListProperties() {
 	var err error
 	var minPrice, maxPrice, minReviewScore float64
@@ -134,7 +139,14 @@ func (c *PropertyController) sendBadRequest(message string) {
 	c.ServeJSON()
 }
 
-// GetPropertyByID handles: GET/v1/properties/:id
+// GetPropertyByID
+// @Title Get Property By ID
+// @Description Retrieve a single fully transformed rental property object directly using its unique ID.
+// @Param   id     path    string  true        "The unique Property ID (e.g. BC-1000001)"
+// @Success 200 {object} models.ResponseProperty "Single transformed property object"
+// @Failure 400 {object} map[string]string "Bad Request error schema"
+// @Failure 404 {object} map[string]string "Property not found error schema"
+// @router /properties/:id [get]
 func (c *PropertyController) GetPropertyByID() {
 	id := c.Ctx.Input.Param(":id")
 
