@@ -35,94 +35,141 @@ func (c *PropertyController) ListProperties() {
 	var minStarRating, minReviews, feed, minBedroom, limit int64
 	var published, propertyType, limitStr, amenities string
 
-	if c.GetString("min_price") == "" {
+	queryParams := c.Ctx.Input.Context.Request.URL.Query()
+
+	if _, exists := queryParams["min_price"]; !exists {
 		minPrice = -1.0
 	} else {
+		if c.GetString("min_price") == "" {
+			c.sendBadRequest("Invalid min_price parameter")
+			return
+		}
 		minPrice, err = c.GetFloat("min_price")
-		if err != nil {
+		if err != nil || minPrice < 0 {
 			c.sendBadRequest("Invalid min_price parameter")
 			return
 		}
 	}
 
-	if c.GetString("max_price") == "" {
+	if _, exists := queryParams["max_price"]; !exists {
 		maxPrice = -1.0
 	} else {
+		if c.GetString("max_price") == "" {
+			c.sendBadRequest("Invalid max_price parameter")
+			return
+		}
 		maxPrice, err = c.GetFloat("max_price")
-		if err != nil {
+		if err != nil || maxPrice < 0 {
 			c.sendBadRequest("Invalid max_price parameter")
 			return
 		}
 	}
 
-	if c.GetString("min_review_score") == "" {
+	if _, exists := queryParams["min_review_score"]; !exists {
 		minReviewScore = -1.0
 	} else {
+		if c.GetString("min_review_score") == "" {
+			c.sendBadRequest("Invalid min_review_score parameter")
+			return
+		}
 		minReviewScore, err = c.GetFloat("min_review_score")
-		if err != nil {
+		if err != nil || minReviewScore < 0 {
 			c.sendBadRequest("Invalid min_review_score parameter")
 			return
 		}
 	}
 
-	if c.GetString("min_star_rating") == "" {
+	if _, exists := queryParams["min_star_rating"]; !exists {
 		minStarRating = -1
 	} else {
+		if c.GetString("min_star_rating") == "" {
+			c.sendBadRequest("Invalid min_star_rating parameter")
+			return
+		}
 		minStarRating, err = c.GetInt64("min_star_rating")
-		if err != nil {
+		if err != nil || minStarRating < 0 {
 			c.sendBadRequest("Invalid min_star_rating parameter")
 			return
 		}
 	}
 
-	if c.GetString("min_reviews") == "" {
+	if _, exists := queryParams["min_reviews"]; !exists {
 		minReviews = -1
 	} else {
+		if c.GetString("min_reviews") == "" {
+			c.sendBadRequest("Invalid min_reviews parameter")
+			return
+		}
 		minReviews, err = c.GetInt64("min_reviews")
-		if err != nil {
+		if err != nil || minReviews < 0 {
 			c.sendBadRequest("Invalid min_reviews parameter")
 			return
 		}
 	}
 
-	if c.GetString("feed") == "" {
+	if _, exists := queryParams["feed"]; !exists {
 		feed = -1
 	} else {
-		feed, err = c.GetInt64("feed")
-		if err != nil {
+		if c.GetString("feed") == "" {
 			c.sendBadRequest("Invalid feed parameter")
 			return
 		}
-		if feed != 11 && feed != 12 && feed != 22 && feed != 24 && feed != -1 {
+		feed, err = c.GetInt64("feed")
+		if err != nil || feed < 0 {
+			c.sendBadRequest("Invalid feed parameter")
+			return
+		}
+		if feed != 11 && feed != 12 && feed != 22 && feed != 24 {
 			c.sendBadRequest("Invalid feed parmeter")
 			return
 		}
 	}
 
-	if c.GetString("min_bedroom") == "" {
+	if _, exists := queryParams["min_bedroom"]; !exists {
 		minBedroom = -1
 	} else {
+		if c.GetString("min_bedroom") == "" {
+			c.sendBadRequest("Invalid min_bedroom parameter")
+			return
+		}
 		minBedroom, err = c.GetInt64("min_bedroom")
-		if err != nil {
+		if err != nil || minBedroom < 0 {
 			c.sendBadRequest("Invalid min_bedroom parameter")
 			return
 		}
 	}
 
+	if _, exists := queryParams["property_type"]; exists && c.GetString("property_type") == "" {
+		c.sendBadRequest("Invalid property type parameter")
+		return
+	}
 	propertyType = c.GetString("property_type")
-	published = c.GetString("published")
-	amenities = c.GetString("amenities")
-
 	if propertyType != "" && propertyType != "Hotel" && propertyType != "House" &&
 		propertyType != "Apartment" && propertyType != "Villa" && propertyType != "Resort" && propertyType != "Hostel" {
 		c.sendBadRequest("Invalid property type parameter")
 		return
 	}
 
-	limitStr = c.GetString("limit")
-	limit = -1
+	if _, exists := queryParams["published"]; exists && c.GetString("published") == "" {
+		c.sendBadRequest("Invalid published parameter")
+		return
+	}
+	published = c.GetString("published")
 
-	if limitStr != "" {
+	if _, exists := queryParams["amenities"]; exists && c.GetString("amenities") == "" {
+		c.sendBadRequest("Invalid amenities parameter")
+		return
+	}
+	amenities = c.GetString("amenities")
+
+	if _, exists := queryParams["limit"]; !exists {
+		limit = -1
+	} else {
+		limitStr = c.GetString("limit")
+		if limitStr == "" {
+			c.sendBadRequest("Invalid limit parameter")
+			return
+		}
 		parsedLimit, err := strconv.Atoi(limitStr)
 		if err != nil || parsedLimit <= 0 {
 			c.sendBadRequest("Invalid limit parameter")
