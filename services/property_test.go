@@ -288,6 +288,30 @@ func TestFilterProperties(t *testing.T) {
 			published: "", feed: -1, minBedroom: -1, propType: "", amenities: "", limit: -1,
 			expectedCount: 0,
 		},
+		{
+			name:     "Filter - Target Review Score (Covers red block 1)",
+			minPrice: -1, maxPrice: -1, minStar: -1, minScore: 8.0, minReviews: -1,
+			published: "", feed: -1, minBedroom: -1, propType: "", amenities: "", limit: -1,
+			expectedCount: 2,
+		},
+		{
+			name:     "Filter - Target Minimum Reviews count (Covers red block 2)",
+			minPrice: -1, maxPrice: -1, minStar: -1, minScore: -1, minReviews: 20,
+			published: "", feed: -1, minBedroom: -1, propType: "", amenities: "", limit: -1,
+			expectedCount: 2,
+		},
+		{
+			name:     "Filter - Target Minimum Bedroom Count (Covers red block 3)",
+			minPrice: -1, maxPrice: -1, minStar: -1, minScore: -1, minReviews: -1,
+			published: "", feed: -1, minBedroom: 2, propType: "", amenities: "", limit: -1,
+			expectedCount: 2,
+		},
+		{
+			name:     "Filter - Target Published False Case (Covers red block)",
+			minPrice: -1, maxPrice: -1, minStar: -1, minScore: -1, minReviews: -1,
+			published: "false", feed: -1, minBedroom: -1, propType: "", amenities: "", limit: -1,
+			expectedCount: 1,
+		},
 	}
 
 	for _, test := range tests {
