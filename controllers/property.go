@@ -135,6 +135,7 @@ func (c *PropertyController) ListProperties() {
 
 	if err != nil {
 		c.Ctx.Output.SetStatus(500)
+		return
 	}
 	response := map[string]interface{}{
 		"Result": map[string]interface{}{
@@ -170,6 +171,7 @@ func (c *PropertyController) GetPropertyByID() {
 	if err != nil {
 		if err.Error() == "Property not found" {
 			c.Ctx.Output.SetStatus(404)
+			return
 		}
 
 		c.Ctx.Output.SetStatus(404)

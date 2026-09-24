@@ -51,7 +51,7 @@ func TransformData(properties []models.SourceProperty) ([]models.ResponsePropert
 			err := json.Unmarshal([]byte(property.Categories), &Categories)
 			if err != nil {
 				logs.Error("Index:%d of Can't parse categories: %s \n", index, err)
-				return nil, err
+				return []models.ResponseProperty{}, err
 			} else {
 				for _, category := range Categories {
 					breadcrumbs = append(breadcrumbs, category.Name)
