@@ -135,6 +135,8 @@ func (c *PropertyController) ListProperties() {
 
 	if err != nil {
 		c.Ctx.Output.SetStatus(500)
+		c.Data["json"] = map[string]string{"Error": "An unexpected internal server error occurred"}
+		c.ServeJSON()
 		return
 	}
 	response := map[string]interface{}{
@@ -171,11 +173,13 @@ func (c *PropertyController) GetPropertyByID() {
 	if err != nil {
 		if err.Error() == "Property not found" {
 			c.Ctx.Output.SetStatus(404)
+			c.Data["json"] = map[string]string{"Error": err.Error()}
+			c.ServeJSON()
 			return
 		}
 
-		c.Ctx.Output.SetStatus(404)
-		c.Data["json"] = map[string]string{"Error": err.Error()}
+		c.Ctx.Output.SetStatus(500)
+		c.Data["json"] = map[string]string{"Error": "An unexpected internal server error occurred"}
 		c.ServeJSON()
 		return
 	}
