@@ -25,8 +25,9 @@ type PropertyController struct {
 // @Param   property_type      query   string  false   "Exact match category (Hotel, House, Apartment, Villa, Resort, Hostel)"
 // @Param   amenities          query   string  false   "Comma-separated list of required amenities (e.g. Internet,Parking)"
 // @Param   limit              query   int     false   "Maximum number of items to return"
-// @Success 200 {object} map[string]interface{} "Successful transformation payload"
+// @Success 200 {object} models.PropertyListResponseWrapper "Successful transformation payload"
 // @Failure 400 {object} map[string]string "Invalid parameters layout error schema"
+// @Failure 500 {object} map[string]string "Internal server error"
 // @router /properties/ [get]
 func (c *PropertyController) ListProperties() {
 	var err error
@@ -159,6 +160,7 @@ func (c *PropertyController) sendBadRequest(message string) {
 // @Success 200 {object} models.ResponseProperty "Single transformed property object"
 // @Failure 400 {object} map[string]string "Bad Request error schema"
 // @Failure 404 {object} map[string]string "Property not found error schema"
+// @Failure 500 {object} map[string]string "Internal server error"
 // @router /properties/:id [get]
 func (c *PropertyController) GetPropertyByID() {
 	id := c.Ctx.Input.Param(":id")

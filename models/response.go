@@ -44,3 +44,8 @@ type Image struct {
 	Count  int64    `json:"Count"`
 	Images []string `json:"Images"`
 }
+
+type PropertyListResponseWrapper struct {
+	Count int                `json:"Count"`
+	Items []ResponseProperty `json:"Items"`
+}

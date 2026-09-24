@@ -3,7 +3,6 @@ package services
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"rental-property-api/models"
 	"strings"
@@ -37,8 +36,6 @@ func LoadData() {
 		logs.Error("Error parsing JSON:", err)
 		return
 	}
-	fmt.Println(InMemoryProperties)
-
 }
 
 func TransformData(properties []models.SourceProperty) ([]models.ResponseProperty, error) {
